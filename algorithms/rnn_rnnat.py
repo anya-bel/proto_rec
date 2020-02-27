@@ -46,15 +46,14 @@ def readLangs(file, lang1, lang2):
         read().strip().split('\n')
     pairs = [[x.split('\t')[1], x.split('\t')[-1]] for x in lines if x.split('\t')[0] != '-'][1:]
     pairs = [[x[0]+'1', x[1]] for x in pairs]
-    new_pairs = [[x.split('\t')[0], x.split('\t')[-1]] for x in lines if x.split('\t')[0] != '-'][1:]
     input_lang = Lang(lang1)
     output_lang = Lang(lang2)
     length = int(len(pairs)/4)*3
 
     return input_lang, output_lang, pairs[:length], pairs[length:]
 
-def prepareData(lang1, lang2):
-    input_lang, output_lang, pairs, test_pairs = readLangs(lang1, lang2)
+def prepareData(file, lang1, lang2):
+    input_lang, output_lang, pairs, test_pairs = readLangs(file, lang1, lang2)
     print("Read %s word pairs" % len(pairs))
     print("Counting letters...")
     for pair in pairs:
@@ -64,9 +63,6 @@ def prepareData(lang1, lang2):
     print(input_lang.name, input_lang.n_letters)
     print(output_lang.name, output_lang.n_letters)
     return input_lang, output_lang, pairs, test_pairs
-
-input_lang, output_lang, pairs, test_pairs = prepareData('fr', 'latin')
-print(random.choice(pairs))
 
 
 class EncoderRNN(nn.Module):
@@ -85,7 +81,6 @@ class EncoderRNN(nn.Module):
 
     def initHidden(self):
         return torch.zeros(1, 1, self.hidden_size, device=device)
-
 
 class AttnDecoderRNN(nn.Module):
     def __init__(self, hidden_size, output_size, dropout_p=0.1, max_length=MAX_LENGTH):
@@ -126,12 +121,14 @@ class AttnDecoderRNN(nn.Module):
 def indexesFromWord(lang, word):
     return [lang.letter2index[letter] for letter in word]
 
+
 def tensorFromWord(lang, word):
     indexes = indexesFromWord(lang, word)
     indexes.append(EOS_token)
     return torch.tensor(indexes, dtype=torch.long, device=device).view(-1, 1)
 
-def tensorsFromPair(pair):
+
+def tensorsFromPair(input_lang, output_lang, pair):
     input_tensor = tensorFromWord(input_lang, pair[0])
     target_tensor = tensorFromWord(output_lang, pair[1])
     return (input_tensor, target_tensor)
@@ -158,6 +155,7 @@ def train(input_tensor, target_tensor, encoder, decoder, encoder_optimizer, deco
 
     decoder_hidden = encoder_hidden
 
+
     for di in range(target_length):
         decoder_output, decoder_hidden, decoder_attention = decoder(
             decoder_input, decoder_hidden, encoder_outputs)
@@ -180,6 +178,7 @@ def asMinutes(s):
     s -= m * 60
     return '%dm %ds' % (m, s)
 
+
 def timeSince(since, percent):
     now = time.time()
     s = now - since
@@ -187,13 +186,13 @@ def timeSince(since, percent):
     rs = es - s
     return '%s (- %s)' % (asMinutes(s), asMinutes(rs))
 
-def trainIters(encoder, decoder, n_iters, print_every=1000, learning_rate=0.01):
+def trainIters(input_lang, output_lang, encoder, decoder, pairs, n_iters, print_every=1000, learning_rate=0.01):
     start = time.time()
     print_loss_total = 0
 
     encoder_optimizer = optim.SGD(encoder.parameters(), lr=learning_rate)
     decoder_optimizer = optim.SGD(decoder.parameters(), lr=learning_rate)
-    training_pairs = [tensorsFromPair(random.choice(pairs))
+    training_pairs = [tensorsFromPair(input_lang, output_lang, random.choice(pairs))
                       for i in range(n_iters)]
     criterion = nn.NLLLoss()
 
@@ -212,7 +211,7 @@ def trainIters(encoder, decoder, n_iters, print_every=1000, learning_rate=0.01):
             print('%s (%d %d%%) %.4f' % (timeSince(start, iter / n_iters),
                                          iter, iter / n_iters * 100, print_loss_avg))
 
-def evaluate(encoder, decoder, word, max_length=MAX_LENGTH):
+def evaluate(input_lang, output_lang, encoder, decoder, word, max_length=MAX_LENGTH):
     with torch.no_grad():
         input_tensor = tensorFromWord(input_lang, word)
         input_length = input_tensor.size()[0]
