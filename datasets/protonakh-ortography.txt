@@ -1,3 +1,4 @@
+root	chechen	ingush	batsbi
 ʔab	-	-	ʔab
 ʔablV 	evla 	ovla 	-
 ʔaħ	aħ	aħ	aħ
