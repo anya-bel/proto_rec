@@ -1,5 +1,10 @@
-from utils import minimumEditDistance
 import numpy as np
+from utils import minimumEditDistance
+from model import ProtoReconstruction
+
+model = ProtoReconstruction('lang', 'rnn', 'attn')
+model.fit('/ds/protonakh-ortography.txt')
+model.train(iters=20)
 
 distances = []
 i = 0
@@ -19,8 +24,7 @@ for word, root, lang in model.test_pairs:
   if root == word:
     eq_w += 1
   total += 1
-print(total)
-print(i)
+
 print("edit", np.mean(distances))
 print("acc model", eq/total)
 print("baseline", eq_w/total)
