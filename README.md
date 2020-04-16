@@ -5,8 +5,9 @@
 |acc|0.32|0.23|0.0|0.0|0.0|0.31|0.33|0.24|
 |edit|1.59|1.81|3.64|4.03|3.61|1.48|1.51|1.48|
 
-|||ingush(train size 479)|chechen(train size 565)|batsbi(train size 332)|all languages without lang emb(train size 1376)|all languages with lang emb(train size 1376)|
+|||ingush|chechen|batsbi|all languages without lang emb|all languages with lang emb|
 |--|--|--|--|--|--|--|
+|train size||479|565|332|1376|1376|
 |average|edit distance|2.373684210526316|2.1184060101257556|2.1847826086956523|**1.400523560209424**| 1.5261780104712044|
 ||accuracy|0.07659073055773762|0.14670912951167728|0.0956521739130435|**0.3607329842931937**| 0.29162303664921463|
 ||baseline accuracy|0.14714397935136347|0.21815286624203822|0.33043478260869563|0.22041884816753926|0.22041884816753923|
