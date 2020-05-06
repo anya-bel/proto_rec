@@ -3,12 +3,6 @@ from utils import minimumEditDistance
 from model import ProtoReconstruction
 
 model = ProtoReconstruction('lang', 'rnn', 'attn')
-model.fit('/ds/protonakh-ortography.txt')
-model.train(iters=20)
-
-from model import ProtoReconstruction
-
-model = ProtoReconstruction('lang', 'rnn', 'attn')
 model.fit('/datasets/protonakh-ortography.txt')
 model.train(iters=20)
 
