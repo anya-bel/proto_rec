@@ -1,6 +1,12 @@
 from utils import minimumEditDistance
 import numpy as np
 
+from model import ProtoReconstruction
+
+model = ProtoReconstruction('lang', 'rnn', 'attn')
+model.fit('/datasets/protonakh-ortography.txt')
+model.train(iters=20)
+
 distances = []
 i = 0
 eq = 0

@@ -816,8 +816,8 @@ q̇uw	q̇u	q̇u	q̇uw
 r	rš	raš	r
 r	ra 	ra 	re
 r	r	-	-
-r	pres.+r	pres.+r	-
-ra	pres.+ra 	pres.+r 	ir
+r	r	r	-
+ra	ra 	r 	ir
 sa	sa	sa	sa
 sa	sa 	saχila 	saχiʎno
 samVḳ 	samg	-	-

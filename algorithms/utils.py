@@ -18,7 +18,7 @@ class EncoderRNN(nn.Module):
             lang_embedded = self.lang_embedding(lang).view(1, 1, -1)
             output, hidden = self.lang_gru(torch.cat((word_embedded, lang_embedded), -1), hidden)
         else:
-            output, hidden = self.lang_gru(word_embedded, hidden)
+            output, hidden = self.gru(word_embedded, hidden)
         return output, hidden
 
 class EncoderCNN(nn.Module):
